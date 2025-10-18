@@ -4,7 +4,10 @@ npx supabase login        # login and enter code given from bowser
 cd backend
 python -m venv venv         # create virtual environment
 source venv/bin/activate    # Mac/Linux
-venv\Scripts\activate       # Windows
+
+# Activate 
+
+## venv\Scripts\activate       # Windows
 
 pip install -r requirements.txt  # install dependencies
 
