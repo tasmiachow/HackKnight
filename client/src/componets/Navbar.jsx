@@ -31,7 +31,7 @@ const Navbar = () => {
         
             
             </nav>
-        <Outlet />
+        
         </>
     );
 };

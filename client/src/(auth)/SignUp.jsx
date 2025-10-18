@@ -70,7 +70,7 @@ export default function SignUp() {
 
   return (
     <div style={{ display: 'grid', gap: 12, maxWidth: 420 }}>
-      <Navbar/>
+      
       <h2>Create an account</h2>
 
       <button onClick={google} disabled={loading}>Continue with Google</button>

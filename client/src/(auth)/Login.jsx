@@ -59,7 +59,7 @@ export default function LogIn() {
 
   return (
     <div style={{ display: 'grid', gap: 12, maxWidth: 420 }}>
-      <Navbar/>
+      
       <h2>Log in</h2>
       {fromSignup && (
         <div
