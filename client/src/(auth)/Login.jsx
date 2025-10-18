@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../supabase'
 import { useSession } from '../useSession.js'
+import Navbar from '../componets/Navbar.jsx'
 
 export default function LogIn() {
   const [email, setEmail] = useState('')
@@ -58,6 +59,7 @@ export default function LogIn() {
 
   return (
     <div style={{ display: 'grid', gap: 12, maxWidth: 420 }}>
+      <Navbar/>
       <h2>Log in</h2>
       {fromSignup && (
         <div
