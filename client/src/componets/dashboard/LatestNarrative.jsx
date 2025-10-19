@@ -21,7 +21,7 @@ export default function LatestNarrative({ className, tickers = [] }) {
 
       try {
         // 1️⃣ Get user's watchlist from Flask
-        const wlRes = await fetch(`${BACKEND_URL}/watchlist/${session.user.id}`);
+        const wlRes = await fetch(`${BACKEND_URL}/watchlist/${userId}`);
         const wlData = await wlRes.json();
 
         // Use selected tickers if provided; otherwise fetch the user's watchlist
