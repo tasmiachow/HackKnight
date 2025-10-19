@@ -77,7 +77,7 @@ def analyze_headlines():
 
 
 
-#GET sentimenet ticker return stored sentiment data to frontend  
+#entimenet ticker return stored sentiment data to frontend  
 
 @app.route("/history/<ticker>", methods=["GET"])
 def get_history(ticker):

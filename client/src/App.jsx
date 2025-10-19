@@ -13,6 +13,7 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 
 // App Pages
 import DashboardPage from "./pages/DashboardPage.jsx";
+import LogOut from "./componets/auth/LogOut.jsx";
 
 function App() {
   return (
@@ -22,7 +23,10 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Homepage />} />
         <Route path="login" element={<LoginPage />} />
+        <Route path="logout" element={<LogOut />} />
+
         <Route path="register" element={<RegisterPage />} />
+        
       </Route>
 
       {/* 2. PRIVATE ROUTES (Main App) */}

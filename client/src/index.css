@@ -1,1 +1,38 @@
 @import "tailwindcss";
+
+
+:root {
+  --color-background-start: #011314;
+  --color-background-end:   #182B29;
+  --color-logo-light: #B8F966;
+  --color-logo-dark: #68d77c;
+  --color-accent: #B8F966;
+  --color-text-primary: #B9C4C7;
+  --color-text-bold: #FDFFFF;
+  --color-button: #BDFF67;
+  --color-green-slate-1: #223634;
+  --color-green-slate-2: #234b48;
+}
+
+.bg-gradient-main {
+  background: linear-gradient(
+    90deg,
+    var(--color-background-start) 0%,
+    var(--color-background-end) 100%
+  );
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  @apply min-h-screen text-[var(--color-text-primary)];
+  background: linear-gradient(
+    90deg,
+    var(--color-background-start) 0%,
+    var(--color-background-end) 100%
+  );
+}
