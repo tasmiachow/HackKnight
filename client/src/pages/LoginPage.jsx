@@ -85,6 +85,7 @@ export default function LogInPage() {
       >
         Continue with Google
       </button>
+      <p className="text-center text-slate-400 mb-4">or</p>
       <form className="space-y-6" onSubmit={emailPasswordSignIn}>
         {/* Email Input */}
         <div>

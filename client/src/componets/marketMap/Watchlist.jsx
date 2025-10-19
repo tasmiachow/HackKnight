@@ -46,16 +46,7 @@ const Watchlist = () => {
         ))}
       </ul>
 
-      {/* Logout Button at the bottom */}
-      <div className="mt-auto">
-        <Link
-          to="/logout"
-          onClick={() => console.log("Log out")}
-          className="block text-center w-full px-4 py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-md transition-colors"
-        >
-          Log Out
-        </Link>
-      </div>
+      
     </div>
   );
 };

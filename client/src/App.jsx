@@ -14,6 +14,7 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 // App Pages
 import DashboardPage from "./pages/DashboardPage.jsx";
 import LogOut from "./componets/auth/LogOut.jsx";
+import MarketMapPage from "./pages/MarketMapPage.jsx";
 
 function App() {
   return (
@@ -32,12 +33,9 @@ function App() {
       {/* 2. PRIVATE ROUTES (Main App) */}
       {/* These are wrapped in ProtectedRoute to check for a user */}
       <Route element={<ProtectedRoute />}>
-        {/* If user is logged in, show AppLayout (no Navbar/Footer) */}
-        <Route path="/dashboard" element={<AppLayout />}>
-          {/* The default page for /dashboard is our DashboardPage */}
-          <Route index element={<DashboardPage />} />
-          {/* You could add more app pages here later, like: */}
-          {/* <Route path="profile" element={<ProfilePage />} /> */}
+      <Route element={<AppLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/market-map" element={<MarketMapPage />} />
         </Route>
       </Route>
     </Routes>

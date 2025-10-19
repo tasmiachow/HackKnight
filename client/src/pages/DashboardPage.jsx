@@ -1,23 +1,28 @@
 import React from "react";
-import MarketMoodboard from "../componets/dashboard/MarketMoodboard.jsx";
-import SentimentChart from "../componets/dashboard/SentimentChart.jsx";
 // 1. Import our new data feed component
-import DataFeed from "../componets/dashboard/DataFeed.jsx";
+
+import OverallSentiment from "../componets/dashboard/OverallSentiment.jsx";
+import LatestNarrative from "../componets/dashboard/LatestNarrative.jsx";
+import SentimentChartD from "../componets/dashboard/SentimentChartD.jsx";
+
 
 const DashboardPage = () => {
   // This page will render inside the <AppLayout>'s <Outlet>
   return (
-    // We add 'pb-8' to give some padding at the very bottom
-    <div className="p-8 pb-16 bg-transparent">
-      <h1 className="text-4xl font-bold text-white mb-8">Market Moodboard</h1>
+    <div className="p-6 lg:p-8">
+      {/* Mobile: 1 col (stack)  |  ≥lg: 3 cols */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* TOP: Sentiment Snapshot spans ALL 3 columns (full width) */}
+        <SentimentChartD className="lg:col-span-3 min-h-[20rem]" />
 
-      <MarketMoodboard />
+        {/* RIGHT: tall card spans 2 rows */}
+        <OverallSentiment className="lg:col-span-1 lg:row-span-2 h-full" />
 
-      <SentimentChart />
-
-      {/* 2. Add the new component here */}
-      <DataFeed />
+        {/* LEFT-BOTTOM: wide card spans 2 columns */}
+        <LatestNarrative className="lg:col-span-2" />
+      </div>
     </div>
+    
   );
 };
 
