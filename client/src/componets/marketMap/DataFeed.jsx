@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDashboard } from "../../context/DashboardContext.jsx";
 import Card from "../ui/Card.jsx";
+import BACKEND_URL from "../../config.js";
 
 // A helper to get the right icon for the source
 const SourceIcon = ({ source }) => {
@@ -35,7 +36,7 @@ export default function DataFeed({ className }) {
       if (!activeStock?.symbol) return;
       setLoading(true);
       try {
-        const res = await fetch(`http://127.0.0.1:5000/news/${activeStock.symbol}`);
+        const res = await fetch(`${BACKEND_URL}/news/${activeStock.symbol}`);
         const data = await res.json();
 
         if (Array.isArray(data) && data.length > 0) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Card from "../ui/Card.jsx";
 import { useSession } from "../../useSession";
+import BACKEND_URL from "../../config.js";
 
 export default function WatchlistManager({ onUpdate }) {
   const session = useSession();
@@ -13,7 +14,7 @@ export default function WatchlistManager({ onUpdate }) {
     const fetchWatchlist = async () => {
       if (!session?.user) return;
       try {
-        const res = await fetch(`http://127.0.0.1:5000/watchlist/${session.user.id}`);
+        const res = await fetch(`${BACKEND_URL}/watchlist/${session.user.id}`);
         const data = await res.json();
         if (res.ok) setWatchlist(data.watchlist || []);
       } catch (err) {
@@ -31,7 +32,7 @@ export default function WatchlistManager({ onUpdate }) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/watchlist/add", {
+      const res = await fetch(`${BACKEND_URL}/watchlist/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

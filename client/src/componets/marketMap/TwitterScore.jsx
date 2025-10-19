@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDashboard } from "../../context/DashboardContext.jsx";
+import BACKEND_URL from "../../config.js";
 
 export default function TwitterScore() {
   const { activeStock } = useDashboard();
@@ -11,7 +12,7 @@ export default function TwitterScore() {
       if (!activeStock?.symbol) return;
       setLoading(true);
       try {
-        const res = await fetch(`http://127.0.0.1:5000/twitter/average/${activeStock.symbol}`);
+        const res = await fetch(`${BACKEND_URL}/twitter/average/${activeStock.symbol}`);
         const data = await res.json();
 
         if (res.ok && data.avg_score !== null) {

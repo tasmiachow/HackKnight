@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDashboard } from "../../context/DashboardContext.jsx";
 import { useSession } from "../../useSession";
 import Card from "../ui/Card.jsx";
+import BACKEND_URL from "../../config.js";
 
 export default function Watchlist({ className }) {
   const { watchlist, setWatchlist, activeStock, setActiveStock } = useDashboard();
@@ -14,7 +15,7 @@ export default function Watchlist({ className }) {
     const fetchWatchlist = async () => {
       if (!user) return;
       try {
-        const res = await fetch(`http://127.0.0.1:5000/watchlist/${user.id}`);
+        const res = await fetch(`${BACKEND_URL}/watchlist/${user.id}`);
         const data = await res.json();
 
         if (data.watchlist) {
@@ -22,7 +23,7 @@ export default function Watchlist({ className }) {
           const formatted = await Promise.all(
             data.watchlist.map(async (ticker) => {
               try {
-                const sentimentRes = await fetch(`http://127.0.0.1:5000/history/${ticker}`);
+                const sentimentRes = await fetch(`${BACKEND_URL}/history/${ticker}`);
                 const sentimentData = await sentimentRes.json();
 
                 let latestScore = 0;
@@ -55,7 +56,7 @@ export default function Watchlist({ className }) {
   // ✅ On click, fetch ticker history and update sentiment color dynamically
   const handleStockClick = async (stock) => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/history/${stock.symbol}`);
+      const res = await fetch(`${BACKEND_URL}/history/${stock.symbol}`);
       const data = await res.json();
 
       if (Array.isArray(data) && data.length > 0) {
@@ -92,7 +93,7 @@ export default function Watchlist({ className }) {
     if (!newTicker || !user) return;
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/watchlist/add", {
+      const res = await fetch(`${BACKEND_URL}/watchlist/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

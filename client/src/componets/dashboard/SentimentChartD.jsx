@@ -4,6 +4,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 import { useSession } from "../../useSession";
+import BACKEND_URL from "../../config.js";
+
 
 export default function SentimentSnapshot({ className }) {
   const session = useSession();
@@ -14,7 +16,7 @@ export default function SentimentSnapshot({ className }) {
     const fetchHistory = async () => {
       if (!session?.user) return;
       try {
-        const res = await fetch(`http://127.0.0.1:5000/history/watchlist/${session.user.id}`);
+        const res = await fetch(`${BACKEND_URL}/history/watchlist/${session.user.id}`);
         const json = await res.json();
         if (res.ok) {
           setData(json);

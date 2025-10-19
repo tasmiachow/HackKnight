@@ -4,6 +4,7 @@ import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import Card from "../ui/Card.jsx";
 import { useDashboard } from "../../context/DashboardContext.jsx";
+import BACKEND_URL from "../../config.js";
 
 // --- PARTICLE SYSTEM (No changes here, it just receives props) ---
 const ParticleSystem = ({ sentiment }) => {
@@ -66,7 +67,7 @@ export default function MarketMoodboard({ className }) {
       if (!activeStock?.symbol) return;
 
       try {
-        const res = await fetch(`http://127.0.0.1:5000/history/${activeStock.symbol}`);
+        const res = await fetch(`${BACKEND_URL}/history/${activeStock.symbol}`);
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
           const latest = data[data.length - 1];

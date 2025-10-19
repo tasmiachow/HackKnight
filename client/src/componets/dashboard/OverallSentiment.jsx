@@ -2,7 +2,7 @@ import React from "react";
 import Card from "../ui/Card.jsx";
 import { useEffect, useState } from "react";
 import { useSession } from "../../useSession";
-
+import BACKEND_URL from "../../config.js";
 
 export default function OverallSentiment({ className }) {
   // placeholder stats – swap with real values
@@ -18,7 +18,7 @@ export default function OverallSentiment({ className }) {
 
       try {
         const res = await fetch(
-          `http://127.0.0.1:5000/sentiment/overall/${session.user.id}`
+          `${BACKEND_URL}/sentiment/overall/${session.user.id}`
         );
 
         const data = await res.json();

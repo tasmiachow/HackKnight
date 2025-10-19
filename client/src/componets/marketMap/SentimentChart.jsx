@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { useDashboard } from "../../context/DashboardContext.jsx";
 import Card from "../ui/Card.jsx";
+import BACKEND_URL from "../../config.js";
 
 // We have removed the 'fakeHistory' object from this file.
 

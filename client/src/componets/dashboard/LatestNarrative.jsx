@@ -2,6 +2,7 @@ import React from "react";
 import Card from "../ui/Card.jsx";
 import { useEffect, useState } from "react";
 import { useSession } from "../../useSession";
+import BACKEND_URL from "../../config.js";
 
 
 export default function LatestNarrative({ className }) {
@@ -17,7 +18,7 @@ export default function LatestNarrative({ className }) {
 
       try {
         // 1️⃣ Get user's watchlist from Flask
-        const wlRes = await fetch(`http://127.0.0.1:5000/watchlist/${session.user.id}`);
+        const wlRes = await fetch(`${BACKEND_URL}/watchlist/${session.user.id}`);
         const wlData = await wlRes.json();
 
         if (!wlRes.ok || !wlData.watchlist || wlData.watchlist.length === 0) {
@@ -32,7 +33,7 @@ export default function LatestNarrative({ className }) {
         // 2️⃣ Fetch one headline per ticker from Flask news route
         for (const ticker of tickers) {
           try {
-            const res = await fetch(`http://127.0.0.1:5000/news/${ticker}`);
+            const res = await fetch(`${BACKEND_URL}/news/${ticker}`);
             const data = await res.json();
 
             if (Array.isArray(data) && data.length > 0) {
