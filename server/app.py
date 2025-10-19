@@ -37,7 +37,7 @@ def get_news(ticker):
 #POST refresh ticker - put data into superbase post
 
 
-#GET sentimenet ticker return stored sentiment data to frontend  
+#entimenet ticker return stored sentiment data to frontend  
 
 
 # ✅ Example POST route (just echoes back the data)
