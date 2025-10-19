@@ -10,23 +10,29 @@ import {
   Legend,
 } from "recharts";
 import { useDashboard } from "../../context/DashboardContext.jsx";
+import Card from "../ui/Card.jsx";
 
 // We have removed the 'fakeHistory' object from this file.
 
-const SentimentChart = () => {
+export default function SentimentChart({ className, items = [] }){
   // 1. Get the full activeStock object from the context
   const { activeStock } = useDashboard();
 
   // 2. Get the history and sentiment from the activeStock
   const chartData = activeStock?.history || [];
-  const stockColor = activeStock?.sentiment > 0 ? "#4ade80" : "#f87171";
+  const stockColor = activeStock?.sentiment > 0 ? "var(--color-accent)" : "#f87171";
 
   return (
+    <Card
+      title=""  
+      subtitle=""
+      className={className}
+    >
     <div className="mt-8">
       <h2 className="text-2xl font-semibold text-white">
         Sentiment History: {activeStock?.symbol || "..."}
       </h2>
-      <div className="mt-4 w-full h-72 bg-slate-800 border border-slate-700 rounded-xl p-4">
+      <div className="mt-4 w-full h-72  rounded-xl p-4">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
@@ -61,7 +67,8 @@ const SentimentChart = () => {
         </ResponsiveContainer>
       </div>
     </div>
+    </Card>
   );
 };
 
-export default SentimentChart;
+

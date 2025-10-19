@@ -2,6 +2,7 @@ import React, { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import Card from "../ui/Card.jsx";
 // 1. Import our new custom hook
 import { useDashboard } from "../../context/DashboardContext.jsx";
 
@@ -60,7 +61,7 @@ const ParticleSystem = ({ sentiment }) => {
 // --- END OF PARTICLE SYSTEM ---
 
 // This is the main component
-const MarketMoodboard = () => {
+export default function MarketMoodboard ({ className, items = [] }) {
   // 2. Get the active stock from the context
   const { activeStock } = useDashboard();
 
@@ -69,7 +70,13 @@ const MarketMoodboard = () => {
   const currentSentiment = activeStock?.sentiment || 0;
 
   return (
-    <div className="w-full h-[600px] rounded-xl overflow-hidden bg-black">
+    <Card
+      title="Market Moodboard"
+      subtitle=""
+      className={className}
+    >
+    
+    <div className="w-full h-[310px] rounded-xl overflow-hidden bg-black">
       <Canvas camera={{ position: [0, 0, 7] }}>
         <fog attach="fog" args={["#000000", 5, 15]} />
 
@@ -83,7 +90,8 @@ const MarketMoodboard = () => {
         />
       </Canvas>
     </div>
+    </Card>
   );
 };
 
-export default MarketMoodboard;
+

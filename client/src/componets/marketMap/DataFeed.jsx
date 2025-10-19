@@ -1,6 +1,6 @@
 import React from "react";
 import { useDashboard } from "../../context/DashboardContext.jsx";
-
+import Card from "../ui/Card.jsx";
 // A helper to get the right icon for the source
 const SourceIcon = ({ source }) => {
   if (source === "Twitter/X") {
@@ -32,12 +32,17 @@ const SourceIcon = ({ source }) => {
   );
 };
 
-const DataFeed = () => {
+export default function DataFeed({ className, items = [] }) {
   // Get the active stock's feed from our context
   const { activeStock } = useDashboard();
   const feedItems = activeStock?.feed || [];
 
   return (
+    <Card
+      title=""  
+      subtitle=""
+      className={className}
+    >
     <div className="mt-8">
       <h2 className="text-2xl font-semibold text-white">
         Live Data Feed: {activeStock?.symbol || "..."}
@@ -47,7 +52,7 @@ const DataFeed = () => {
           feedItems.map((item) => (
             <div
               key={item.id}
-              className="p-4 bg-slate-800 border border-slate-700 rounded-xl flex items-start space-x-3"
+              className="p-4 bg-[var(--color-background-end))] border border-[var(--color-background-end))] rounded-xl flex items-start space-x-3"
             >
               {/* Sentiment Dot */}
               <div
@@ -74,7 +79,8 @@ const DataFeed = () => {
         )}
       </div>
     </div>
+    </Card>
   );
 };
 
-export default DataFeed;
+

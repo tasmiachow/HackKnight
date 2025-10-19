@@ -34,7 +34,7 @@ export default function LatestNarrative({ className, items = [] }) {
 
   return (
     <Card
-      title="Latest Narrative"
+      title="What's New"
       subtitle="AI-generated summaries from recent headlines"
       className={className}
     >
