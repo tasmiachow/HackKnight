@@ -203,8 +203,104 @@ def remove_from_watchlist():
 
 
 
+@app.route("/sentiment/overall/<user_id>", methods=["GET"])
+def get_overall_sentiment_for_user(user_id):
+    """
+    Aggregate sentiment for all tickers in a user's Supabase watchlist.
+    Example: GET /sentiment/overall/abc123
+    """
+    try:
+        # 1️⃣ Fetch the user's watchlist
+        res = supabase.table("watchlists").select("ticker").eq("user_id", user_id).execute()
+        tickers = [r["ticker"] for r in res.data]
+
+        if not tickers:
+            return jsonify({"error": "No tickers found in user watchlist"}), 404
+
+        # 2️⃣ Aggregate sentiment for those tickers
+        total_score = 0
+        total_bull_ratio = 0
+        total_articles = 0
+        valid_tickers = 0
+
+        for ticker in tickers:
+            result = supabase.table("sentiment_snapshots") \
+                .select("score, overall_sentiment") \
+                .eq("ticker", ticker.upper()) \
+                .order("created_at", desc=True) \
+                .limit(1) \
+                .execute()
+
+            if not result.data:
+                continue
+
+            row = result.data[0]
+            score = float(row.get("score", 0))
+            mood = row.get("overall_sentiment", "neutral").lower()
+            bull_ratio = 1 if mood in ["positive", "bullish"] else 0
+
+            total_score += score
+            total_bull_ratio += bull_ratio
+            total_articles += 1
+            valid_tickers += 1
+
+        if valid_tickers == 0:
+            return jsonify({
+                "score": 0,
+                "bullRatio": 0,
+                "articles": 0,
+                "message": "No sentiment data found for user watchlist"
+            }), 404
+
+        avg_score = total_score / valid_tickers
+        avg_bull = total_bull_ratio / valid_tickers
+
+        return jsonify({
+            "score": round(avg_score, 3),
+            "bullRatio": round(avg_bull, 3),
+            "articles": total_articles
+        }), 200
+
+    except Exception as e:
+        print("⚠️ Overall sentiment error:", e)
+        return jsonify({"error": str(e)}), 500
 
 
+@app.route("/history/watchlist/<user_id>", methods=["GET"])
+def get_watchlist_history(user_id):
+    """
+    Returns sentiment history (time series) for all tickers in a user's watchlist.
+    Used for multi-line Sentiment Snapshot chart.
+    """
+    try:
+        # Get user's watchlist tickers
+        wl_res = supabase.table("watchlists").select("ticker").eq("user_id", user_id).execute()
+        tickers = [r["ticker"] for r in wl_res.data]
+
+        if not tickers:
+            return jsonify({"message": "No tickers in watchlist", "data": []}), 404
+
+        all_data = []
+        for ticker in tickers:
+            res = supabase.table("sentiment_snapshots") \
+                          .select("score, created_at") \
+                          .eq("ticker", ticker.upper()) \
+                          .order("created_at", desc=False) \
+                          .execute()
+            data = res.data or []
+            formatted = [
+                {"ticker": ticker, "time": d["created_at"], "sentiment": float(d["score"])}
+                for d in data if d.get("score") is not None
+            ]
+            all_data.extend(formatted)
+
+        return jsonify(all_data), 200
+
+    except Exception as e:
+        print("⚠️ Watchlist history fetch error:", e)
+        return jsonify({"error": str(e)}), 500
+    
+    
 # ✅ Example POST route (just echoes back the data)
 @app.route("/echo", methods=["POST"])
 def echo():
