@@ -16,7 +16,11 @@ export default function WatchlistManager({ onUpdate }) {
       try {
         const res = await fetch(`${BACKEND_URL}/watchlist/${session.user.id}`);
         const data = await res.json();
-        if (res.ok) setWatchlist(data.watchlist || []);
+        if (res.ok) {
+                    const w = data.watchlist || [];
+                    setWatchlist(w);
+                    onUpdate?.(w); // 🔁 notify parent so other cards refresh on first load
+                  }
       } catch (err) {
         console.error("Error fetching watchlist:", err);
       }
@@ -70,7 +74,7 @@ export default function WatchlistManager({ onUpdate }) {
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded-md text-white font-semibold"
+          className="px-4 py-2 bg-[var(--color-button)] hover:bg-[var(--color-logo-dark)] text-[var(--color-background-start)]  font-semibold"
         >
           {loading ? "Adding..." : "Add"}
         </button>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Card from "../ui/Card.jsx";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
@@ -7,16 +7,21 @@ import { useSession } from "../../useSession";
 import BACKEND_URL from "../../config.js";
 
 
-export default function SentimentSnapshot({ className }) {
+export default function SentimentSnapshot({ className, tickers: refreshTickers = []  }) {
   const session = useSession();
   const [data, setData] = useState([]);
   const [tickers, setTickers] = useState([]);
 
+  const userId = session?.user?.id || null;
+  const tickerKey = useMemo(() => refreshTickers.slice().sort().join(","), [refreshTickers]);
+
+
   useEffect(() => {
     const fetchHistory = async () => {
-      if (!session?.user) return;
+      if (!userId) return;
+
       try {
-        const res = await fetch(`${BACKEND_URL}/history/watchlist/${session.user.id}`);
+        const res = await fetch(`${BACKEND_URL}/history/watchlist/${userId}`);
         const json = await res.json();
         if (res.ok) {
           setData(json);
@@ -28,7 +33,7 @@ export default function SentimentSnapshot({ className }) {
       }
     };
     fetchHistory();
-  }, [session]);
+  }, [userId, tickerKey]);
 
   // 🎨 Assign colors per ticker
   const colors = [

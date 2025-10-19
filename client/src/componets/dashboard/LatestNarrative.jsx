@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useMemo }from "react";
 import Card from "../ui/Card.jsx";
 import { useEffect, useState } from "react";
 import { useSession } from "../../useSession";
 import BACKEND_URL from "../../config.js";
 
 
-export default function LatestNarrative({ className }) {
+export default function LatestNarrative({ className, tickers = [] }) {
   // Example fallback content – replace with your API data
   const [headlines, setHeadlines] = useState([]);
   const [loading, setLoading] = useState(true);
   const session = useSession();
+  const userId = session?.user?.id || null;
+  const tickerKey = useMemo(() => tickers.slice().sort().join(","), [tickers]);
+  
   
   useEffect(() => {
     const fetchHeadlinesForWatchlist = async () => {
-      if (!session?.user) return;
+      if (!userId) return;
       setLoading(true);
 
       try {
@@ -21,17 +24,23 @@ export default function LatestNarrative({ className }) {
         const wlRes = await fetch(`${BACKEND_URL}/watchlist/${session.user.id}`);
         const wlData = await wlRes.json();
 
-        if (!wlRes.ok || !wlData.watchlist || wlData.watchlist.length === 0) {
+        // Use selected tickers if provided; otherwise fetch the user's watchlist
+        let symbols = tickers;
+        if (!symbols.length) {
+          const wlRes = await fetch(`${BACKEND_URL}/watchlist/${userId}`);
+          const wlData = await wlRes.json();
+          symbols = wlData?.watchlist || [];
+        }
+        if (!symbols.length) {
           setHeadlines([]);
           setLoading(false);
           return;
         }
 
-        const tickers = wlData.watchlist;
+        
         const results = [];
 
-        // 2️⃣ Fetch one headline per ticker from Flask news route
-        for (const ticker of tickers) {
+        await Promise.all(symbols.map(async (ticker) => {
           try {
             const res = await fetch(`${BACKEND_URL}/news/${ticker}`);
             const data = await res.json();
@@ -45,12 +54,13 @@ export default function LatestNarrative({ className }) {
                 link: latest.link,
                 time: new Date(latest.published).toLocaleString(),
                 source: "Yahoo Finance",
+                summary: latest.summary || ""
               });
             }
           } catch (err) {
             console.error(`Error fetching news for ${ticker}:`, err);
           }
-        }
+        }));
 
         setHeadlines(results);
       } catch (err) {
@@ -61,7 +71,7 @@ export default function LatestNarrative({ className }) {
     };
 
     fetchHeadlinesForWatchlist();
-  }, [session]);
+      }, [userId, tickerKey]);
 
   // 🔄 Loading state
   if (loading) {
