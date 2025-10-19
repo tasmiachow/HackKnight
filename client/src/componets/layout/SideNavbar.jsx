@@ -1,13 +1,30 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabase";
 
-const Navbar = () => {
+export default function SideNavbar() {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
+
+  const navItems = [
+    { name: "Dashboard", to: "/dashboard" },
+    { name: "Market Map", to: "/market-map" },
+    { name: "Lens", to: "/lens" },
+  ];
+
   return (
-    <nav className="fixed top-0 left-0 w-full bg-transparent backdrop-blur-md z-50">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="text-2xl font-bold text-white">
-          <svg width="127" height="28" viewBox="0 0 127 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <aside
+      className="fixed top-0 left-0 h-screen w-64 
+                  border-r border-white/10 
+                 text-white flex flex-col justify-between p-6"
+    >
+      {/* Logo */}
+      <div className="flex items-center space-x-2 mb-10">
+      <svg width="127" height="28" viewBox="0 0 127 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 5.00001C0 2.23858 2.23858 0 5 0H27.2238C27.5 0 27.7238 0.223858 27.7238 0.5V27.22C27.7238 27.4961 27.5 27.72 27.2238 27.72H0.500001C0.223859 27.72 0 27.4961 0 27.22V5.00001Z" fill="white" fill-opacity="0.8"/>
             <g clipPath="url(#clip0_3509_5)">
             <path d="M4.54817 15.1893L5.91117 15.5273L6.93717 13.9163L4.98717 13.4343C4.75444 13.376 4.50812 13.4127 4.30239 13.5361C4.09666 13.6595 3.94838 13.8595 3.89017 14.0923C3.83195 14.325 3.86857 14.5713 3.99197 14.777C4.11537 14.9828 4.31544 15.131 4.54817 15.1893ZM22.3392 15.4503L17.8762 19.4663L12.6292 15.4053C12.5291 15.3281 12.414 15.2729 12.2912 15.2433L11.5932 15.0693L10.5662 16.6803L11.6662 16.9533L17.3632 21.3613C17.5323 21.4914 17.7416 21.5584 17.9549 21.5506C18.1682 21.5427 18.3721 21.4605 18.5312 21.3183L23.5592 16.7913C23.6477 16.7119 23.7196 16.6158 23.7708 16.5085C23.822 16.4012 23.8514 16.2848 23.8574 16.1661C23.8633 16.0474 23.8457 15.9286 23.8055 15.8168C23.7653 15.7049 23.7033 15.6021 23.6232 15.5143C23.4613 15.3357 23.2351 15.2287 22.9944 15.2167C22.7537 15.2047 22.518 15.2887 22.3392 15.4503ZM12.5422 11.0383L17.4292 14.1673C17.6277 14.2942 17.8675 14.3394 18.0986 14.2936C18.3297 14.2477 18.5342 14.1143 18.6692 13.9213L23.6962 6.67926C23.7645 6.58162 23.8127 6.47139 23.8381 6.35495C23.8635 6.23852 23.8655 6.1182 23.844 6.00098C23.8225 5.88377 23.778 5.77199 23.7129 5.67213C23.6479 5.57227 23.5637 5.48632 23.4652 5.41926C23.2668 5.28224 23.0223 5.2295 22.7851 5.27262C22.5479 5.31574 22.3376 5.4512 22.2002 5.64926L17.6722 12.1703L12.7562 9.02326C12.5519 8.89336 12.3048 8.84916 12.0682 8.90026C11.9512 8.92561 11.8404 8.97404 11.7424 9.04273C11.6443 9.11141 11.561 9.19897 11.4972 9.30026L4.00017 21.0673C3.91226 21.2041 3.86295 21.3622 3.85745 21.5248C3.85195 21.6873 3.89047 21.8484 3.96894 21.9909C4.04741 22.1334 4.1629 22.252 4.30323 22.3343C4.44356 22.4166 4.60351 22.4594 4.76617 22.4583C4.91917 22.4585 5.06975 22.4201 5.20399 22.3467C5.33822 22.2733 5.45178 22.1672 5.53417 22.0383L12.5422 11.0383Z" fill="#011314"/>
@@ -19,22 +36,37 @@ const Navbar = () => {
             </clipPath>
             </defs>
           </svg>
-
-
-
-
-
-          </Link>
-          <Link
-            to="/login"
-            className="bg-[var(--color-button)] hover:bg-[var(--color-logo-dark)] text-[var(--color-background-start)]  font-semibold px-5 py-2 rounded-md transition duration-300"
-          >
-            Get Started
-          </Link>
-        </div>
       </div>
-    </nav>
-  );
-};
 
-export default Navbar;
+      {/* Navigation Links */}
+      <nav className="space-y-3">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.to}
+            className={({ isActive }) =>
+              `block px-4 py-2 rounded-md text-sm font-medium transition 
+              ${
+                isActive
+                  ? "bg-[linear-gradient(90deg,var(--color-logo-dark),var(--color-logo-light))] text-black"
+                  : "hover:bg-white/10"
+              }`
+            }
+          >
+            {item.name}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="mt-8 w-full hover:bg-white/10 
+                   text-white font-semibold py-2 px-4 rounded-md 
+                   transition-colors"
+      >
+        Log Out
+      </button>
+    </aside>
+  );
+}
