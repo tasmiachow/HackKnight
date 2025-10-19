@@ -13,7 +13,6 @@ export default function SideNavbar() {
   const navItems = [
     { name: "Dashboard", to: "/dashboard" },
     { name: "Market Map", to: "/market-map" },
-    { name: "Lens", to: "/lens" },
   ];
 
   return (

@@ -8,7 +8,13 @@ import { useDashboard } from "../../context/DashboardContext.jsx";
 export default function SentimentSnapshot({ className }) {
   const { activeStock } = useDashboard();
   const data = activeStock?.history || [];
-  const color = activeStock?.sentiment > 0 ? "#4ade80" : "#f87171";
+  const color = activeStock?.sentiment > 0 ? "var(--color-accent)" : "#f87171";
+  const accentColor = getComputedStyle(document.documentElement)
+  .getPropertyValue("--color-accent")
+  .trim();
+
+
+  
 
   return (
     <Card
