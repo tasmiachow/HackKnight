@@ -17,13 +17,16 @@ const MarketMapPage = () => {
         {/* Sentiment Snapshot (left) with TwitterScore below it */}
         <div className="lg:col-span-1 flex flex-col space-y-4">
           <SentimentChart />
-          <TwitterScore />
+          
         </div>
 
         {/* Live Data Feed — stretch full width across 2 cols */}
+        <TwitterScore />
         <DataFeed className="lg:col-span-2" />
       </div>
     </div>
+
+    
   );
 };
 

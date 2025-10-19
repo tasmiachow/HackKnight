@@ -1,25 +1,26 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Card from "../ui/Card.jsx";
 import { useEffect, useState } from "react";
 import { useSession } from "../../useSession";
 import BACKEND_URL from "../../config.js";
 
-export default function OverallSentiment({ className }) {
+export default function OverallSentiment({ className, tickers = [] }) {
   // placeholder stats – swap with real values
   const [overall, setOverall] = useState(null);
   const [loading, setLoading] = useState(true);
   const session = useSession();
+  const userId = session?.user?.id || null;
+  const tickerKey = useMemo(() => tickers.slice().sort().join(","), [tickers]);
+
 
 
   useEffect(() => {
     const fetchOverall = async () => {
-      if (!session?.user) return;
+      if (!userId) return;
       setLoading(true);
 
       try {
-        const res = await fetch(
-          `${BACKEND_URL}/sentiment/overall/${session.user.id}`
-        );
+        const res = await fetch(`${BACKEND_URL}/sentiment/overall/${userId}`);
 
         const data = await res.json();
 
@@ -38,7 +39,7 @@ export default function OverallSentiment({ className }) {
     };
 
     fetchOverall();
-  }, [session]);
+  }, [userId, tickerKey]);
   
   if (loading || !overall) {
     return (

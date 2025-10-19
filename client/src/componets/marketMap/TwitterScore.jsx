@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDashboard } from "../../context/DashboardContext.jsx";
 import BACKEND_URL from "../../config.js";
+import Card from "../ui/Card.jsx";
 
-export default function TwitterScore() {
+export default function TwitterScore(className) {
   const { activeStock } = useDashboard();
   const [twitterScore, setTwitterScore] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -34,6 +35,7 @@ export default function TwitterScore() {
   if (!activeStock?.symbol) return null;
 
   return (
+    <Card title="Overall Twitter Score:" subtitle="" className={className}>
     <div className="mt-4 text-md text-slate-300">
       {loading ? (
         <p>Loading Twitter sentiment...</p>
@@ -49,5 +51,6 @@ export default function TwitterScore() {
         <p className="text-slate-500">No Twitter data available for {activeStock.symbol}.</p>
       )}
     </div>
+    </Card>
   );
 }
