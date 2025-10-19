@@ -14,7 +14,7 @@ import Card from "../ui/Card.jsx";
 
 // We have removed the 'fakeHistory' object from this file.
 
-export default function SentimentChart({ className, items = [] }){
+export default function SentimentChart({ className }){
   // 1. Get the full activeStock object from the context
   const { activeStock } = useDashboard();
 

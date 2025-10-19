@@ -1,9 +1,8 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import Card from "../ui/Card.jsx";
-// 1. Import our new custom hook
 import { useDashboard } from "../../context/DashboardContext.jsx";
 
 // --- PARTICLE SYSTEM (No changes here, it just receives props) ---
@@ -21,22 +20,20 @@ const ParticleSystem = ({ sentiment }) => {
     return positions;
   }, []);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (pointsRef.current) {
       const positions = pointsRef.current.geometry.attributes.position.array;
-      const driftSpeed = sentiment * 2; // Controlled by the prop
-
+      const driftSpeed = sentiment * 2;
       for (let i = 0; i < positions.length; i += 3) {
         positions[i + 1] += delta * driftSpeed;
-        if (driftSpeed > 0 && positions[i + 1] > 5) {
-          positions[i + 1] = -5;
-        } else if (driftSpeed < 0 && positions[i + 1] < -5) {
-          positions[i + 1] = 5;
-        }
+        if (driftSpeed > 0 && positions[i + 1] > 5) positions[i + 1] = -5;
+        else if (driftSpeed < 0 && positions[i + 1] < -5) positions[i + 1] = 5;
       }
       pointsRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
+
+// --- END OF PARTICLE SYSTEM ---
 
   return (
     <points ref={pointsRef}>
@@ -50,48 +47,51 @@ const ParticleSystem = ({ sentiment }) => {
       </bufferGeometry>
       <pointsMaterial
         size={0.05}
-        color={sentiment > 0 ? "#4ade80" : "#f87171"} // Controlled by the prop
-        sizeAttenuation={true}
-        transparent={true}
+        color={sentiment > 0 ? "#4ade80" : "#f87171"}
+        sizeAttenuation
+        transparent
         opacity={0.8}
       />
     </points>
   );
 };
-// --- END OF PARTICLE SYSTEM ---
 
-// This is the main component
-export default function MarketMoodboard ({ className, items = [] }) {
-  // 2. Get the active stock from the context
+export default function MarketMoodboard({ className }) {
   const { activeStock } = useDashboard();
+  const [sentiment, setSentiment] = useState(0);
 
-  // 3. Use the active stock's sentiment.
-  // We use `|| 0` as a fallback in case activeStock is null.
-  const currentSentiment = activeStock?.sentiment || 0;
+  // 🔥 Fetch latest sentiment when user clicks a ticker
+  useEffect(() => {
+    const fetchSentiment = async () => {
+      if (!activeStock?.symbol) return;
+
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/history/${activeStock.symbol}`);
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const latest = data[data.length - 1];
+          setSentiment(parseFloat(latest.score) || 0);
+        } else {
+          setSentiment(0);
+        }
+      } catch (err) {
+        console.error("⚠️ Error fetching sentiment:", err);
+        setSentiment(0);
+      }
+    };
+
+    fetchSentiment();
+  }, [activeStock?.symbol]);
 
   return (
-    <Card
-      title="Market Moodboard"
-      subtitle=""
-      className={className}
-    >
-    
-    <div className="w-full h-[310px] rounded-xl overflow-hidden bg-black">
-      <Canvas camera={{ position: [0, 0, 7] }}>
-        <fog attach="fog" args={["#000000", 5, 15]} />
-
-        {/* 4. Pass the real sentiment to the particle system */}
-        <ParticleSystem sentiment={currentSentiment} />
-
-        <OrbitControls
-          autoRotate={true}
-          autoRotateSpeed={0.5}
-          enableZoom={false}
-        />
-      </Canvas>
-    </div>
+    <Card title="Market Moodboard" subtitle="" className={className}>
+      <div className="w-full h-[310px] rounded-xl overflow-hidden bg-black">
+        <Canvas camera={{ position: [0, 0, 7] }}>
+          <fog attach="fog" args={["#000000", 5, 15]} />
+          <ParticleSystem sentiment={sentiment} />
+          <OrbitControls autoRotate autoRotateSpeed={0.5} enableZoom={false} />
+        </Canvas>
+      </div>
     </Card>
   );
-};
-
-
+}
