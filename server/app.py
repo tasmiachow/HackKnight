@@ -105,6 +105,48 @@ def get_sentiment_window(ticker):
         print("⚠️ Sentiment window fetch error:", e)
         return jsonify({"error": str(e)}), 500
 
+
+# Route to get average twitter score if there are tweets on that comapny 
+@app.route("/twitter/average/<ticker>", methods=["GET"])
+def get_twitter_avg_for_ticker(ticker):
+    """
+    Returns the average tweet sentiment for a specific ticker.
+    Example: GET /twitter/average/TSLA
+    """
+    try:
+        # Fetch all tweet-based sentiment rows for that ticker
+        res = supabase.table("sentiment_snapshots") \
+                      .select("score") \
+                      .eq("source", "tweet") \
+                      .eq("ticker", ticker.upper()) \
+                      .execute()
+
+        data = res.data or []
+        scores = [float(row["score"]) for row in data if row.get("score") is not None]
+
+        if not scores:
+            return jsonify({
+                "ticker": ticker.upper(),
+                "avg_score": None,
+                "count": 0,
+                "message": f"No tweet sentiment data found for {ticker.upper()}"
+            }), 404
+
+        avg_score = round(sum(scores) / len(scores), 4)
+
+        return jsonify({
+            "ticker": ticker.upper(),
+            "avg_score": avg_score,
+            "count": len(scores)
+        }), 200
+
+    except Exception as e:
+        print("⚠️ Twitter avg fetch error:", e)
+        return jsonify({"error": str(e)}), 500
+
+
+
+
 # ✅ Example POST route (just echoes back the data)
 @app.route("/echo", methods=["POST"])
 def echo():
