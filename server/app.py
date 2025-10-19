@@ -300,7 +300,7 @@ def get_watchlist_history(user_id):
         print("⚠️ Watchlist history fetch error:", e)
         return jsonify({"error": str(e)}), 500
     
-    
+
 # ✅ Example POST route (just echoes back the data)
 @app.route("/echo", methods=["POST"])
 def echo():
@@ -308,4 +308,4 @@ def echo():
     return jsonify({"you_sent": data}), 200
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
