@@ -1,51 +1,95 @@
 import React from "react";
 import Card from "../ui/Card.jsx";
+import { useEffect, useState } from "react";
+import { useSession } from "../../useSession";
 
-export default function LatestNarrative({ className, items = [] }) {
+
+export default function LatestNarrative({ className }) {
   // Example fallback content – replace with your API data
-  const data = items.length
-    ? items
-    : [
-        {
-          id: 1,
-          title: "Tech leads rally on upbeat guidance",
-          summary:
-            "Semis and cloud lifted indices as guidance topped expectations.",
-          source: "Bloomberg",
-          time: "15m ago",
-        },
-        {
-          id: 2,
-          title: "Energy dips as crude cools",
-          summary:
-            "WTI pullback weighed on majors; refiners held up on crack spreads.",
-          source: "Reuters",
-          time: "32m ago",
-        },
-        {
-          id: 3,
-          title: "Yields ease after dovish remarks",
-          summary:
-            "Fed commentary nudged the curve lower; growth outperformed value.",
-          source: "WSJ",
-          time: "1h ago",
-        },
-      ];
+  const [headlines, setHeadlines] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const session = useSession();
+  
+  useEffect(() => {
+    const fetchHeadlinesForWatchlist = async () => {
+      if (!session?.user) return;
+      setLoading(true);
+
+      try {
+        // 1️⃣ Get user's watchlist from Flask
+        const wlRes = await fetch(`http://127.0.0.1:5000/watchlist/${session.user.id}`);
+        const wlData = await wlRes.json();
+
+        if (!wlRes.ok || !wlData.watchlist || wlData.watchlist.length === 0) {
+          setHeadlines([]);
+          setLoading(false);
+          return;
+        }
+
+        const tickers = wlData.watchlist;
+        const results = [];
+
+        // 2️⃣ Fetch one headline per ticker from Flask news route
+        for (const ticker of tickers) {
+          try {
+            const res = await fetch(`http://127.0.0.1:5000/news/${ticker}`);
+            const data = await res.json();
+
+            if (Array.isArray(data) && data.length > 0) {
+              const latest = data[0];
+              results.push({
+                id: `${ticker}-${latest.link}`,
+                ticker,
+                title: latest.title,
+                link: latest.link,
+                time: new Date(latest.published).toLocaleString(),
+                source: "Yahoo Finance",
+              });
+            }
+          } catch (err) {
+            console.error(`Error fetching news for ${ticker}:`, err);
+          }
+        }
+
+        setHeadlines(results);
+      } catch (err) {
+        console.error("Error fetching user watchlist:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHeadlinesForWatchlist();
+  }, [session]);
+
+  // 🔄 Loading state
+  if (loading) {
+    return (
+      <Card title="Latest Headlines" subtitle="From Yahoo Finance" className={className}>
+        <p className="text-slate-400 text-sm">Loading your personalized headlines...</p>
+      </Card>
+    );
+  }
+
+
 
   return (
     <Card
-      title="What's New"
-      subtitle="AI-generated summaries from recent headlines"
+      title="Latest Headlines"
+      subtitle="From Yahoo Finance"
       className={className}
     >
+      {headlines.length >0 ? (
       <ul className="space-y-4">
-        {data.map((n) => (
+        {headlines.map((n) => (
           <li
             key={n.id}
             className="rounded-lg border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition"
           >
             <h3 className="text-base md:text-lg font-semibold text-white">
-              {n.title}
+              <a href={n.link} target="_blank" rel="noopener noreferrer">
+                  [{n.ticker}] {n.title}
+              </a>
             </h3>
             <p className="mt-1 text-sm text-slate-300">{n.summary}</p>
             <div className="mt-2 text-xs text-slate-400">
@@ -54,7 +98,12 @@ export default function LatestNarrative({ className, items = [] }) {
             </div>
           </li>
         ))}
-      </ul>
+      </ul>) 
+      : (
+        <p className="text-slate-400 text-sm">
+          No recent headlines found for your watchlist.
+        </p>
+      )}
     </Card>
   );
 }
