@@ -9,6 +9,10 @@ from sentiment.gemini import analyze_sentiment
 from supabase import create_client, Client
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
 
 
 
@@ -143,6 +147,60 @@ def get_twitter_avg_for_ticker(ticker):
     except Exception as e:
         print("⚠️ Twitter avg fetch error:", e)
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/watchlist/<user_id>", methods=["GET"])
+def get_watchlist(user_id):
+    try:
+        res = supabase.table("watchlists").select("ticker").eq("user_id", user_id).execute()
+        tickers = [r["ticker"] for r in res.data]
+        return jsonify({"watchlist": tickers}), 200
+    except Exception as e:
+        print("⚠️ Watchlist fetch error:", e)
+        return jsonify({"error": str(e)}), 500
+    
+
+
+@app.route("/watchlist/add", methods=["POST"])
+def add_to_watchlist():
+    data = request.get_json()
+    user_id = data.get("user_id")
+    ticker = data.get("ticker")
+
+    if not user_id or not ticker:
+        return jsonify({"error": "user_id and ticker required"}), 400
+
+    try:
+        supabase.table("watchlists").insert({
+            "user_id": user_id,
+            "ticker": ticker.upper()
+        }).execute()
+        return jsonify({"message": f"Added {ticker} to watchlist"}), 201
+    except Exception as e:
+        print("⚠️ Add watchlist error:", e)
+        return jsonify({"error": str(e)}), 500
+    
+
+
+
+@app.route("/watchlist/remove", methods=["POST"])
+def remove_from_watchlist():
+    data = request.get_json()
+    user_id = data.get("user_id")
+    ticker = data.get("ticker")
+
+    if not user_id or not ticker:
+        return jsonify({"error": "user_id and ticker required"}), 400
+
+    try:
+        supabase.table("watchlists").delete() \
+            .eq("user_id", user_id).eq("ticker", ticker.upper()) \
+            .execute()
+        return jsonify({"message": f"Removed {ticker} from watchlist"}), 200
+    except Exception as e:
+        print("⚠️ Remove watchlist error:", e)
+        return jsonify({"error": str(e)}), 500
+
 
 
 
