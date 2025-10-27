@@ -49,16 +49,16 @@ export default function LogInPage() {
     }
   }
 
-  const google = async () => {
-    setStatus('Redirecting to Google…')
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
-    })
-    if (error) setStatus(error.message)
-  }
+  // const google = async () => {
+  //   setStatus('Redirecting to Google…')
+  //   const { error } = await supabase.auth.signInWithOAuth({
+  //     provider: 'google',
+  //     options: {
+  //       redirectTo: `${window.location.origin}/dashboard`,
+  //     },
+  //   })
+  //   if (error) setStatus(error.message)
+  // }
 
   return (
     <AuthLayout title="Login">
@@ -78,14 +78,14 @@ export default function LogInPage() {
       )}
 
       {/* OAuth button */}
-      <button
+      {/* <button
         type="button"
         onClick={google}
         className="mb-6 w-full rounded-md bg-white/90 px-4 py-3 font-semibold text-slate-900 hover:bg-white transition"
       >
         Continue with Google
       </button>
-      <p className="text-center text-slate-400 mb-4">or</p>
+      <p className="text-center text-slate-400 mb-4">or</p> */}
       <form className="space-y-6" onSubmit={emailPasswordSignIn}>
         {/* Email Input */}
         <div>
