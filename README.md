@@ -30,7 +30,8 @@ Live Data Feed – Displays recent updates as new data is processed.
 
 ### Check out full youtube demo here:
 
-<a href= "https://youtu.be/SYQBFUTtbag?si=C5DhVJZjMxzRKg05">
+[![Watch the tutorial](https://img.youtube.com/vi/SYQBFUTtbag/0.jpg)](https://youtu.be/SYQBFUTtbag "Click to watch the tutorial")
+
 
 ## How we built it
 Frontend: React + Tailwind for the dashboard and visualizations.
